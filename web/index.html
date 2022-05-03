@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Minic Chess Engine">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minic Chess Engine</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="./css/chessboard-1.0.0.min.css">
+    <link rel="stylesheet" href="./css/enginestyle.css">
+    <link rel="stylesheet" href="./css/slider.css">
+    <link rel="stylesheet" href="./css/settingsstyle.css">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+
+    <script src="minic_wasm.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./js/chessboard-1.0.0.min.js"></script>
+    <script src="./js/chess.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="grid">
+
+            <div class="item-left">
+                <label id="pgn-output"></label>
+            </div>
+
+            <div class="item-main">
+                <div class="container mb-2">
+                    <div class="row justify-content-center">
+
+                        <div class="col-auto">
+                            <button id="btn-cb-start" class="me-4 btn btn-link shadow-none">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </button>
+                            <button id="btn-cb-prev" class="me-4 btn btn-link shadow-none">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </button>
+                            <button id="btn-cb-next" class="me-4 btn btn-link shadow-none">
+                                <i class="fa-solid fa-angle-right"></i>
+                            </button>
+                            <button id="btn-cb-end" class="btn btn-link shadow-none">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="col">
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="board_wrapper" style="width: 500px; height: 500px; position: relative;">
+                   <div id="myBoard" style="width: 500px; height: 500px; position: absolute;" onresize=resize(this)>
+                   </div>
+                   <canvas id="drawing_canvas" class="overlay" width="500px" height="500px" style="position: absolute;">
+                   </canvas>
+                </div>
+    
+                <div class="fenGroup">
+                    <label for="fenInput">FEN</label>
+                    <input id="fenInput" class="form-control">
+                </div>
+            </div>
+
+            <div class="item-right">
+                <div class="sidepanel-title">
+                    <button id="btn-settings" class="me-1 btn btn-link shadow-none">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <label id="engine-name"></label>
+                </div>
+
+                <div id="side-tab1">
+                    <table class="sidepanel-table" style="width:100%">
+                        <colgroup>
+                            <col span="1" style="width: 100px; vertical-align: top; align-content: center">
+                            <col span="2" style="width: calc(100% - 100px);">
+                        </colgroup>
+                        <tbody>
+                            <tr class="table_hl">
+                                <td>Position</td>
+                            </tr>
+                            <tr class="table_tr">
+                                <td>Evaluation</td>
+                                <td><label id="engine-static-evaluation">1</label></td>
+                            </tr>
+                            <tr class="table_hl">
+                                <td>Search</td>
+                            </tr>
+                            <tr class="table_tr">
+                                <td>Score</td>
+                                <td><label id="engine-output-score">2</label></td>
+                            </tr>
+                            <tr class="table_tr">
+                                <td>Depth</td>
+                                <td><label id="engine-output-depth">3</label></td>
+                            </tr>
+                            <tr class="table_tr">
+                                <td>[Nodes;nps]</td>
+                                <td><label id="engine-output-nnps">3</label></td>
+                            </tr>
+                            <tr class="table_tr">
+                                <td>Used Hash</td>
+                                <td><label id="engine-output-hashfull">3</label></td>
+                            </tr>
+                            <tr class="table_tr">
+                                <td>PV</td>
+                                <td><label id="engine-output-pv">3</label></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="side-tab2" class="d-none form-group settings">
+                    <label class="settings-header">Configuration</label>
+                    <div class="settings-group">
+                        <label class="settings-label">Engine plays moves as </label>
+                        <select id="select-engine-side" class="form-control">
+                            <option>None</option>
+                            <option>White</option>
+                            <option>Black</option>
+                            <option>Both</option>
+                        </select>
+                        <label class="settings-label">Engine think time [ms]</label>
+                        <div class="input-label-combo">
+                            <input id="slider-engine-think-time" type="range" min="100" max="5000" value="1000"
+                                step="100" class="slider">
+                            <label id="label-engine-think-time">1000</label>
+                        </div>
+                    </div>
+                    <label class="settings-header">UCI Options</label>
+                    <div class="settings-group">
+                        <label class="settings-label">Hash</label>
+                        <div class="input-label-combo">
+                            <input id="slider-engine-hash" type="range" min="2" max="9" value="7" step="1"
+                                class="slider">
+                            <label id="label-engine-hash">128</label>
+                        </div>
+                        <label class="settings-label">Threads</label>
+                        <div class="input-label-combo">
+                            <input id="slider-engine-threads" type="range" min="1" max="1" value="1" step="1"
+                                class="slider">
+                            <label id="label-engine-threads">1</label>
+                        </div>
+                        <label class="settings-label">Level</label>
+                        <div class="input-label-combo">
+                            <input id="slider-engine-level" type="range" min="1" max="100" value="100" step="1"
+                                class="slider">
+                            <label id="label-engine-level">100</label>
+                        </div>         
+                        <label class="settings-label">Multi-PV</label>               
+                        <div class="input-label-combo">
+                            <input id="slider-engine-multipv" type="range" min="1" max="1" value="1" step="1"
+                                class="slider">
+                            <label id="label-engine-multipv">1</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="./js/settings.js"></script>
+    <script src="./js/chessaibindings.js"></script>
+    <script src="./js/jquery-ready.js"></script>
+    <script src="./js/drawarrow.js"></script>
+        
+</body>
+</html>
