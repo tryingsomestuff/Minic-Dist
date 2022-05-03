@@ -1,0 +1,19 @@
+.settings{
+
+}
+
+.settings .settings-group{
+    padding-left: 0.3rem;
+}
+
+.settings-label{
+    margin-top: 0.7rem;
+    margin-bottom: 0.3rem;
+}
+
+.settings-header{
+    font-weight: 700;
+    font-size: 1.2rem;
+    width: 100%;
+    margin-top: 1.3rem;
+}

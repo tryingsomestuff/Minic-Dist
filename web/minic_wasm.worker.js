@@ -1,0 +1,1 @@
+../Minic3/minic_dev_linux_x64_wasm.worker.js
