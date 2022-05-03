@@ -1,4 +1,4 @@
-# Web page to use WASM build of Minic
+# Web page to use WASM build of Minic
 
 ## Build
 
